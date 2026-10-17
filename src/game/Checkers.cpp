@@ -4,9 +4,8 @@ namespace game {
 
 Checkers::Checkers(std::int32_t boardSize, std::int32_t numRows, std::int32_t patience)
     : boardSize(boardSize), numRows(numRows),
-      boardState(boardSize, std::vector<std::optional<Piece>>(boardSize)),
-      currentPlayer(Color::White), gameState(GameState::Ongoing),
-      quietMoves(0), patience(patience) {
+      board(boardSize, std::vector<std::optional<Piece>>(boardSize)),
+      currentPlayer(Color::White), quietMoves(0), patience(patience) {
     for (std::int32_t row = 0; row < boardSize; ++row)
         for (std::int32_t column = 0; column < boardSize; ++column) {
             if ((row + column) % 2 == 0)
@@ -20,7 +19,7 @@ Checkers::Checkers(std::int32_t boardSize, std::int32_t numRows, std::int32_t pa
             else 
                 continue;
 
-            boardState[row][column] = Piece{color, false};
+            board[row][column] = Piece{color, false};
         }
 }
 
@@ -28,7 +27,7 @@ void Checkers::place(Piece piece, Position position) {
     if (!inBounds(position.row, position.column))
         throw std::out_of_range("Board position out of bounds");
 
-    boardState[position.row][position.column] = piece;
+    board[position.row][position.column] = piece;
 }
 
 std::optional<Piece> Checkers::at(Position position) const {
@@ -39,7 +38,7 @@ std::optional<Piece> Checkers::at(std::int32_t row, std::int32_t column) const {
     if (!inBounds(row, column))
         throw std::out_of_range("Board position out of bounds");
 
-    return boardState[row][column];
+    return board[row][column];
 }
 
 std::vector<Move> Checkers::validMoves(Position from) const {
@@ -75,19 +74,19 @@ std::vector<Move> Checkers::captureMoves(Position from) const {
             std::int32_t scanColumn = column + directionColumn;
 
             while (inBounds(scanRow, scanColumn) &&
-                   !boardState[scanRow][scanColumn].has_value()) {
+                   !board[scanRow][scanColumn].has_value()) {
                 scanRow += directionRow;
                 scanColumn += directionColumn;
             }
 
             if (inBounds(scanRow, scanColumn) &&
-                boardState[scanRow][scanColumn].has_value() &&
-                piece->isOpponent(*boardState[scanRow][scanColumn])) {
+                board[scanRow][scanColumn].has_value() &&
+                piece->isOpponent(*board[scanRow][scanColumn])) {
                 std::int32_t landingRow = scanRow + directionRow;
                 std::int32_t landingColumn = scanColumn + directionColumn;
                 // a king may land on any empty square beyond the captured piece
                 while (inBounds(landingRow, landingColumn) &&
-                       !boardState[landingRow][landingColumn].has_value()) {
+                       !board[landingRow][landingColumn].has_value()) {
                     captures.push_back(
                         Move{{landingRow, landingColumn}, Position{scanRow, scanColumn}});
                     landingRow += directionRow;
@@ -100,15 +99,15 @@ std::vector<Move> Checkers::captureMoves(Position from) const {
             std::int32_t jumpedColumn = column + directionColumn;
 
             if (!inBounds(jumpedRow, jumpedColumn) ||
-                !boardState[jumpedRow][jumpedColumn].has_value() ||
-                !piece->isOpponent(*boardState[jumpedRow][jumpedColumn]))
+                !board[jumpedRow][jumpedColumn].has_value() ||
+                !piece->isOpponent(*board[jumpedRow][jumpedColumn]))
                 continue;
 
             std::int32_t landingRow = jumpedRow + directionRow;
             std::int32_t landingColumn = jumpedColumn + directionColumn;
 
             if (inBounds(landingRow, landingColumn) &&
-                !boardState[landingRow][landingColumn].has_value())
+                !board[landingRow][landingColumn].has_value())
                 captures.push_back(
                     Move{{landingRow, landingColumn}, Position{jumpedRow, jumpedColumn}});
         }
@@ -135,7 +134,7 @@ std::vector<Move> Checkers::simpleMoves(Position from) const {
             std::int32_t nextColumn = column + directionColumn;
 
             while (inBounds(nextRow, nextColumn) &&
-                   !boardState[nextRow][nextColumn].has_value()) {
+                   !board[nextRow][nextColumn].has_value()) {
                 moves.push_back({{nextRow, nextColumn}, std::nullopt});
                 nextRow += directionRow;
                 nextColumn += directionColumn;
@@ -149,7 +148,7 @@ std::vector<Move> Checkers::simpleMoves(Position from) const {
             std::int32_t nextColumn = column + columnDirection;
 
             if (inBounds(nextRow, nextColumn) &&
-                !boardState[nextRow][nextColumn].has_value())
+                !board[nextRow][nextColumn].has_value())
                 moves.push_back({{nextRow, nextColumn}, std::nullopt});
         }
     }
@@ -162,17 +161,17 @@ void Checkers::perform(Position from, const Move& move) {
     ++quietMoves;
 
     Position to = move.to;
-    boardState[to.row][to.column] = boardState[from.row][from.column];
+    board[to.row][to.column] = board[from.row][from.column];
 
-    boardState[from.row][from.column] = std::nullopt;
+    board[from.row][from.column] = std::nullopt;
 
     if (move.captured.has_value()) {
         Position captured = *move.captured;
-        boardState[captured.row][captured.column] = std::nullopt;
+        board[captured.row][captured.column] = std::nullopt;
         quietMoves = 0;
     }
 
-    auto& piece = boardState[to.row][to.column];
+    auto& piece = board[to.row][to.column];
     if (piece && !piece->isKing)
         if ((piece->color == Color::Black && move.to.row == boardSize - 1) ||
             (piece->color == Color::White && move.to.row == 0)) {
@@ -192,7 +191,7 @@ void Checkers::perform(Position from, const Move& move) {
 bool Checkers::hasLegalMoves(Color player) const {
     for (std::int32_t row = 0; row < boardSize; ++row)
         for (std::int32_t column = 0; column < boardSize; ++column) {
-            const auto& square = boardState[row][column];
+            const auto& square = board[row][column];
             if (square &&
                 square->color == player &&
                 !validMoves({row, column}).empty())
@@ -202,13 +201,14 @@ bool Checkers::hasLegalMoves(Color player) const {
     return false;
 }
 
-void Checkers::state() {
+GameState Checkers::state() const {
     if (quietMoves >= patience)
         return GameState::Draw;
     if (!hasLegalMoves(currentPlayer))
         return currentPlayer == Color::White ?
-                                            GameState::BlackWins :
-                                            GameState::WhiteWins;
+                                    GameState::BlackWins :
+                                    GameState::WhiteWins;
+    
     return GameState::Ongoing;
 }
 

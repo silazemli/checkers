@@ -13,7 +13,7 @@
 
 namespace {
 
-QByteArray arguments(quint8 value) {
+QByteArray prepareArguments(quint8 value) {
     QByteArray bytes;
 
     QDataStream out(&bytes, QIODevice::WriteOnly);
@@ -60,7 +60,7 @@ void RoundTrip::emptyPayload() {
 }
 
 void RoundTrip::smallPayload() {
-    const QByteArray arguments = arguments(7);
+    QByteArray arguments = prepareArguments(7);
 
     QByteArray wire = frame(NetworkAction::AssignColor, arguments);
     QBuffer device(&wire);
@@ -104,7 +104,7 @@ private slots:
 };
 
 void Partial::lessThanPrefix() {
-    QByteArray wire = frame(NetworkAction::AssignColor, arguments(1));
+    QByteArray wire = frame(NetworkAction::AssignColor, prepareArguments(1));
     wire.truncate(3);
 
     QBuffer device(&wire);
@@ -118,7 +118,7 @@ void Partial::lessThanPrefix() {
 }
 
 void Partial::prefixOnly() {
-    QByteArray wire = frame(NetworkAction::AssignColor, arguments(1));
+    QByteArray wire = frame(NetworkAction::AssignColor, prepareArguments(1));
     wire.truncate(sizeof(quint32));
 
     QBuffer device(&wire);
@@ -132,7 +132,7 @@ void Partial::prefixOnly() {
 }
 
 void Partial::prefixAndPartOfBody() {
-    QByteArray wire = frame(NetworkAction::AssignColor, arguments(1));
+    QByteArray wire = frame(NetworkAction::AssignColor, prepareArguments(1));
     wire.truncate(sizeof(quint32) + 1);
 
     QBuffer device(&wire);
@@ -154,7 +154,7 @@ private slots:
 };
 
 void Resume::afterPrefixOnly() {
-    const QByteArray arguments = arguments(42);
+    const QByteArray arguments = prepareArguments(42);
     const QByteArray wire = frame(NetworkAction::AssignColor, arguments);
 
     QByteArray received = wire.left(sizeof(quint32));
@@ -176,7 +176,7 @@ void Resume::afterPrefixOnly() {
 }
 
 void Resume::afterPartOfBody() {
-    const QByteArray arguments = arguments(123);
+    const QByteArray arguments = prepareArguments(123);
     const QByteArray wire = frame(NetworkAction::AssignColor, arguments);
 
     const qsizetype split = sizeof(quint32) + (arguments.size() + 1) / 2;
@@ -208,8 +208,8 @@ private slots:
 };
 
 void Multiple::twoFrames() {
-    const QByteArray first = arguments(1);
-    const QByteArray second = arguments(2);
+    const QByteArray first = prepareArguments(1);
+    const QByteArray second = prepareArguments(2);
 
     QByteArray wire;
     {
@@ -238,8 +238,8 @@ void Multiple::twoFrames() {
 }
 
 void Multiple::firstCompleteSecondPartial() {
-    const QByteArray first = arguments(1);
-    const QByteArray second = arguments(2);
+    const QByteArray first = prepareArguments(1);
+    const QByteArray second = prepareArguments(2);
 
     QByteArray wire;
     {

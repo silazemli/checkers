@@ -108,10 +108,10 @@ void Server::handleSubmitMove(Player& player, QDataStream& in) {
 
     game->perform(from, move);
 
-    game::GameState gameState = game->check();
+    game::GameState gameState = game->state();
     if (gameState == game::GameState::Ongoing) {
-        sendMessage(*white.socket, NetworkAction::UpdateBoardState, game->board);
-        sendMessage(*black.socket, NetworkAction::UpdateBoardState, game->board);
+        sendMessage(*white.socket, NetworkAction::UpdateBoardState, game->getBoard());
+        sendMessage(*black.socket, NetworkAction::UpdateBoardState, game->getBoard());
     } else {
         sendMessage(*white.socket, NetworkAction::EndGame, gameState);
         sendMessage(*black.socket, NetworkAction::EndGame, gameState);

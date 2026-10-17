@@ -314,13 +314,13 @@ void Perform::promotion() {
 
 void Perform::switchesTurn() {
     auto checkers = cleanBoard();
-    QCOMPARE(checkers.player(), game::Color::White);
+    QCOMPARE(checkers.getCurrentPlayer(), game::Color::White);
 
     place(checkers, 5, 2, game::Color::White);
     checkers.perform({5, 2}, {{4, 1}, std::nullopt});
 
-    QCOMPARE(checkers.player(), game::Color::Black);
-    QVERIFY(!checkers.activePiece().has_value());
+    QCOMPARE(checkers.getCurrentPlayer(), game::Color::Black);
+    QVERIFY(!checkers.getCapturing().has_value());
 }
 
 void Perform::keepsTurnOnMultiCapture() {
@@ -334,8 +334,8 @@ void Perform::keepsTurnOnMultiCapture() {
     QVERIFY(!checkers.at(4, 1).has_value());
     QVERIFY(isPiece(checkers.at(3, 0), game::Color::White));
 
-    QCOMPARE(checkers.player(), game::Color::White);
-    auto active = checkers.activePiece();
+    QCOMPARE(checkers.getCurrentPlayer(), game::Color::White);
+    auto active = checkers.getCapturing();
     QVERIFY(active.has_value());
     QCOMPARE(active->row, 3);
     QCOMPARE(active->column, 0);
@@ -467,9 +467,10 @@ void GameState::ongoingMidChain() {
     place(checkers, 4, 1, game::Color::Black);
     place(checkers, 2, 1, game::Color::Black);
 
-    const auto state = checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
+    checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
+    const auto state = checkers.state();
 
-    QVERIFY(checkers.activePiece().has_value());
+    QVERIFY(checkers.getCapturing().has_value());
     QCOMPARE(state, game::GameState::Ongoing);
 }
 
@@ -485,8 +486,10 @@ void GameState::whiteWinsWhenBlackStuck() {
     place(checkers, 5, 2, game::Color::White);
     place(checkers, 7, 0, game::Color::Black);
 
-    const auto state = checkers.perform({5, 2}, {{4, 1}, std::nullopt});
-    QCOMPARE(checkers.player(), game::Color::Black);
+    checkers.perform({5, 2}, {{4, 1}, std::nullopt});
+    const auto state = checkers.state();
+
+    QCOMPARE(checkers.getCurrentPlayer(), game::Color::Black);
     QCOMPARE(state, game::GameState::WhiteWins);
 }
 
@@ -497,7 +500,8 @@ void GameState::drawWhenQuietMovesReachPatience() {
 
     checkers.perform({5, 2}, {{4, 1}, std::nullopt});
     checkers.perform({4, 5}, {{5, 4}, std::nullopt});
-    const auto state = checkers.perform({4, 1}, {{3, 0}, std::nullopt});
+    checkers.perform({4, 1}, {{3, 0}, std::nullopt});
+    const auto state = checkers.state();
 
     QVERIFY(checkers.hasLegalMoves(game::Color::White));
     QVERIFY(checkers.hasLegalMoves(game::Color::Black));
@@ -510,7 +514,8 @@ void GameState::captureResetsQuietMoves() {
     place(checkers, 4, 1, game::Color::Black);
     place(checkers, 3, 6, game::Color::Black);
 
-    const auto state = checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
+    checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
+    const auto state = checkers.state();
 
     QCOMPARE(state, game::GameState::Ongoing);
 }
@@ -519,8 +524,9 @@ void GameState::promotionResetsQuietMoves() {
     game::Checkers checkers(8, 0, 1);
     place(checkers, 1, 0, game::Color::White);
     place(checkers, 5, 4, game::Color::Black);
-
-    const auto state = checkers.perform({1, 0}, {{0, 1}, std::nullopt});
+    
+    checkers.perform({1, 0}, {{0, 1}, std::nullopt});
+    const auto state = checkers.state();
 
     QCOMPARE(state, game::GameState::Ongoing);
 }
@@ -529,10 +535,11 @@ void GameState::drawTakesPriorityOverWin() {
     game::Checkers checkers(8, 0, 1);
     place(checkers, 5, 2, game::Color::White);
 
-    const auto state = checkers.perform({5, 2}, {{4, 1}, std::nullopt});
+    checkers.perform({5, 2}, {{4, 1}, std::nullopt});
+    const auto state = checkers.state();
 
     QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
-    QCOMPARE(checkers.player(), game::Color::Black);
+    QCOMPARE(checkers.getCurrentPlayer(), game::Color::Black);
     QCOMPARE(state, game::GameState::Draw);
 }
 
