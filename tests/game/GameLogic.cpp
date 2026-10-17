@@ -91,10 +91,10 @@ void Board::initialBoard() {
     }};
 
     for (auto [row, column] : blackPositions)
-        QVERIFY(isPiece(checkers.at(row, column), game::Color::BLACK));
+        QVERIFY(isPiece(checkers.at(row, column), game::Color::Black));
 
     for (auto [row, column] : whitePositions)
-        QVERIFY(isPiece(checkers.at(row, column), game::Color::WHITE));
+        QVERIFY(isPiece(checkers.at(row, column), game::Color::White));
 
     QVERIFY(!checkers.at(0, 0).has_value());
     QVERIFY(!checkers.at(3, 3).has_value());
@@ -121,21 +121,21 @@ private slots:
 
 void SimpleMoves::blackMan() {
     auto checkers = cleanBoard();
-    place(checkers, 1, 2, game::Color::BLACK);
+    place(checkers, 1, 2, game::Color::Black);
 
     compareMoves(checkers.simpleMoves({1, 2}), {{2, 1}, {2, 3}});
 }
 
 void SimpleMoves::whiteMan() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
+    place(checkers, 5, 2, game::Color::White);
 
     compareMoves(checkers.simpleMoves({5, 2}), {{4, 1}, {4, 3}});
 }
 
 void SimpleMoves::king() {
     auto checkers = cleanBoard();
-    place(checkers, 4, 3, game::Color::BLACK, true);
+    place(checkers, 4, 3, game::Color::Black, true);
 
     compareMoves(
         checkers.simpleMoves({4, 3}),
@@ -151,9 +151,9 @@ void SimpleMoves::king() {
 void SimpleMoves::blocked() {
     auto checkers = cleanBoard();
 
-    place(checkers, 4, 3, game::Color::BLACK, true);
-    place(checkers, 2, 1, game::Color::BLACK);
-    place(checkers, 3, 4, game::Color::BLACK);
+    place(checkers, 4, 3, game::Color::Black, true);
+    place(checkers, 2, 1, game::Color::Black);
+    place(checkers, 3, 4, game::Color::Black);
 
     compareMoves(
         checkers.simpleMoves({4, 3}),
@@ -179,11 +179,11 @@ private slots:
 void CaptureMoves::man() {
     auto checkers = cleanBoard();
 
-    place(checkers, 3, 2, game::Color::BLACK);
-    place(checkers, 2, 1, game::Color::WHITE);
-    place(checkers, 2, 3, game::Color::WHITE);
-    place(checkers, 4, 1, game::Color::WHITE);
-    place(checkers, 4, 3, game::Color::WHITE);
+    place(checkers, 3, 2, game::Color::Black);
+    place(checkers, 2, 1, game::Color::White);
+    place(checkers, 2, 3, game::Color::White);
+    place(checkers, 4, 1, game::Color::White);
+    place(checkers, 4, 3, game::Color::White);
 
     auto moves = checkers.validMoves({3, 2});
 
@@ -194,8 +194,8 @@ void CaptureMoves::man() {
 void CaptureMoves::manIgnoresOwn() {
     auto checkers = cleanBoard();
 
-    place(checkers, 3, 2, game::Color::BLACK);
-    place(checkers, 2, 1, game::Color::BLACK);
+    place(checkers, 3, 2, game::Color::Black);
+    place(checkers, 2, 1, game::Color::Black);
 
     QVERIFY(checkers.captureMoves({3, 2}).empty());
 }
@@ -203,8 +203,8 @@ void CaptureMoves::manIgnoresOwn() {
 void CaptureMoves::kingAdjacent() {
     auto checkers = cleanBoard();
 
-    place(checkers, 4, 3, game::Color::BLACK, true);
-    place(checkers, 3, 2, game::Color::WHITE);
+    place(checkers, 4, 3, game::Color::Black, true);
+    place(checkers, 3, 2, game::Color::White);
 
     auto moves = checkers.validMoves({4, 3});
 
@@ -215,8 +215,8 @@ void CaptureMoves::kingAdjacent() {
 void CaptureMoves::kingFlying() {
     auto checkers = cleanBoard();
 
-    place(checkers, 7, 0, game::Color::BLACK, true);
-    place(checkers, 4, 3, game::Color::WHITE);
+    place(checkers, 7, 0, game::Color::Black, true);
+    place(checkers, 4, 3, game::Color::White);
 
     auto moves = checkers.validMoves({7, 0});
 
@@ -227,9 +227,9 @@ void CaptureMoves::kingFlying() {
 void CaptureMoves::kingStops() {
     auto checkers = cleanBoard();
 
-    place(checkers, 7, 0, game::Color::BLACK, true);
-    place(checkers, 4, 3, game::Color::WHITE);
-    place(checkers, 1, 6, game::Color::WHITE);
+    place(checkers, 7, 0, game::Color::Black, true);
+    place(checkers, 4, 3, game::Color::White);
+    place(checkers, 1, 6, game::Color::White);
 
     auto moves = checkers.validMoves({7, 0});
 
@@ -249,8 +249,8 @@ private slots:
 void ValidMoves::prefersCapture() {
     auto checkers = cleanBoard();
 
-    place(checkers, 3, 2, game::Color::WHITE);
-    place(checkers, 2, 1, game::Color::BLACK);
+    place(checkers, 3, 2, game::Color::White);
+    place(checkers, 2, 1, game::Color::Black);
 
     compareMoves(checkers.validMoves({3, 2}), {{1, 0}});
 }
@@ -264,7 +264,7 @@ void ValidMoves::emptySquare() {
 void ValidMoves::fallsBackToSimple() {
     auto checkers = cleanBoard();
 
-    place(checkers, 3, 2, game::Color::WHITE);
+    place(checkers, 3, 2, game::Color::White);
 
     compareMoves(checkers.validMoves({3, 2}), {{2, 1}, {2, 3}});
 }
@@ -282,59 +282,59 @@ private slots:
 
 void Perform::simpleMove() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
+    place(checkers, 5, 2, game::Color::White);
 
     checkers.perform({5, 2}, {{4, 1}, std::nullopt});
 
     QVERIFY(!checkers.at(5, 2).has_value());
-    QVERIFY(isPiece(checkers.at(4, 1), game::Color::WHITE));
+    QVERIFY(isPiece(checkers.at(4, 1), game::Color::White));
 }
 
 void Perform::capture() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 4, 1, game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 4, 1, game::Color::Black);
 
     checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
 
     QVERIFY(!checkers.at(5, 2).has_value());
     QVERIFY(!checkers.at(4, 1).has_value());
-    QVERIFY(isPiece(checkers.at(3, 0), game::Color::WHITE));
+    QVERIFY(isPiece(checkers.at(3, 0), game::Color::White));
 }
 
 void Perform::promotion() {
     auto checkers = cleanBoard();
-    place(checkers, 1, 0, game::Color::WHITE);
+    place(checkers, 1, 0, game::Color::White);
 
     checkers.perform({1, 0}, {{0, 1}, std::nullopt});
 
     QVERIFY(!checkers.at(1, 0).has_value());
-    QVERIFY(isPiece(checkers.at(0, 1), game::Color::WHITE, true));
+    QVERIFY(isPiece(checkers.at(0, 1), game::Color::White, true));
 }
 
 void Perform::switchesTurn() {
     auto checkers = cleanBoard();
-    QCOMPARE(checkers.player(), game::Color::WHITE);
+    QCOMPARE(checkers.player(), game::Color::White);
 
-    place(checkers, 5, 2, game::Color::WHITE);
+    place(checkers, 5, 2, game::Color::White);
     checkers.perform({5, 2}, {{4, 1}, std::nullopt});
 
-    QCOMPARE(checkers.player(), game::Color::BLACK);
+    QCOMPARE(checkers.player(), game::Color::Black);
     QVERIFY(!checkers.activePiece().has_value());
 }
 
 void Perform::keepsTurnOnMultiCapture() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 4, 1, game::Color::BLACK);
-    place(checkers, 2, 1, game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 4, 1, game::Color::Black);
+    place(checkers, 2, 1, game::Color::Black);
 
     checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
 
     QVERIFY(!checkers.at(4, 1).has_value());
-    QVERIFY(isPiece(checkers.at(3, 0), game::Color::WHITE));
+    QVERIFY(isPiece(checkers.at(3, 0), game::Color::White));
 
-    QCOMPARE(checkers.player(), game::Color::WHITE);
+    QCOMPARE(checkers.player(), game::Color::White);
     auto active = checkers.activePiece();
     QVERIFY(active.has_value());
     QCOMPARE(active->row, 3);
@@ -357,74 +357,74 @@ private slots:
 
 void LegalMoves::emptyBoard() {
     auto checkers = cleanBoard();
-    QVERIFY(!checkers.hasLegalMoves(game::Color::WHITE));
-    QVERIFY(!checkers.hasLegalMoves(game::Color::BLACK));
+    QVERIFY(!checkers.hasLegalMoves(game::Color::White));
+    QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
 }
 
 void LegalMoves::manWithOpenDiagonals() {
     auto checkers = cleanBoard();
-    place(checkers, 3, 2, game::Color::WHITE);
+    place(checkers, 3, 2, game::Color::White);
 
-    QVERIFY(checkers.hasLegalMoves(game::Color::WHITE));
-    QVERIFY(!checkers.hasLegalMoves(game::Color::BLACK));
+    QVERIFY(checkers.hasLegalMoves(game::Color::White));
+    QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
 }
 
 void LegalMoves::ignoresOtherColor() {
     auto checkers = cleanBoard();
-    place(checkers, 3, 2, game::Color::WHITE);
+    place(checkers, 3, 2, game::Color::White);
 
-    QVERIFY(checkers.hasLegalMoves(game::Color::WHITE));
-    QVERIFY(!checkers.hasLegalMoves(game::Color::BLACK));
+    QVERIFY(checkers.hasLegalMoves(game::Color::White));
+    QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
 }
 
 void LegalMoves::blockedByOwnPieces() {
     auto checkers = cleanBoard();
-    place(checkers, 1, 0, game::Color::WHITE);
-    place(checkers, 0, 1, game::Color::WHITE);
+    place(checkers, 1, 0, game::Color::White);
+    place(checkers, 0, 1, game::Color::White);
 
-    QVERIFY(!checkers.hasLegalMoves(game::Color::WHITE));
+    QVERIFY(!checkers.hasLegalMoves(game::Color::White));
 }
 
 void LegalMoves::blockedByEnemyPieces() {
     auto checkers = cleanBoard();
-    place(checkers, 3, 2, game::Color::WHITE);
-    place(checkers, 2, 1, game::Color::BLACK);
-    place(checkers, 2, 3, game::Color::BLACK);
+    place(checkers, 3, 2, game::Color::White);
+    place(checkers, 2, 1, game::Color::Black);
+    place(checkers, 2, 3, game::Color::Black);
 
-    QVERIFY(checkers.hasLegalMoves(game::Color::WHITE));
+    QVERIFY(checkers.hasLegalMoves(game::Color::White));
 }
 
 void LegalMoves::king() {
     auto checkers = cleanBoard();
-    place(checkers, 4, 3, game::Color::WHITE, true);
+    place(checkers, 4, 3, game::Color::White, true);
 
-    QVERIFY(checkers.hasLegalMoves(game::Color::WHITE));
+    QVERIFY(checkers.hasLegalMoves(game::Color::White));
 }
 
 void LegalMoves::kingBlocked() {
     auto checkers = cleanBoard();
-    place(checkers, 4, 3, game::Color::WHITE, true);
+    place(checkers, 4, 3, game::Color::White, true);
 
-    place(checkers, 3, 2, game::Color::BLACK);
-    place(checkers, 2, 1, game::Color::BLACK);
-    place(checkers, 5, 4, game::Color::BLACK);
-    place(checkers, 6, 5, game::Color::BLACK);
-    place(checkers, 3, 4, game::Color::BLACK);
-    place(checkers, 2, 5, game::Color::BLACK);
-    place(checkers, 5, 2, game::Color::BLACK);
-    place(checkers, 6, 1, game::Color::BLACK);
+    place(checkers, 3, 2, game::Color::Black);
+    place(checkers, 2, 1, game::Color::Black);
+    place(checkers, 5, 4, game::Color::Black);
+    place(checkers, 6, 5, game::Color::Black);
+    place(checkers, 3, 4, game::Color::Black);
+    place(checkers, 2, 5, game::Color::Black);
+    place(checkers, 5, 2, game::Color::Black);
+    place(checkers, 6, 1, game::Color::Black);
 
-    QVERIFY(!checkers.hasLegalMoves(game::Color::WHITE));
+    QVERIFY(!checkers.hasLegalMoves(game::Color::White));
 }
 
 void LegalMoves::atEdge() {
     auto checkers = cleanBoard();
 
-    place(checkers, 0, 1, game::Color::WHITE);
-    QVERIFY(!checkers.hasLegalMoves(game::Color::WHITE));
+    place(checkers, 0, 1, game::Color::White);
+    QVERIFY(!checkers.hasLegalMoves(game::Color::White));
 
-    place(checkers, 7, 0, game::Color::BLACK);
-    QVERIFY(!checkers.hasLegalMoves(game::Color::BLACK));
+    place(checkers, 7, 0, game::Color::Black);
+    QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
 }
 
 class GameState : public QObject {
@@ -446,97 +446,94 @@ private slots:
 
 void GameState::ongoingWithBothSidesMovable() {
     auto checkers = cleanBoard();
-    place(checkers, 3, 2, game::Color::WHITE);
-    place(checkers, 4, 3, game::Color::BLACK);
+    place(checkers, 3, 2, game::Color::White);
+    place(checkers, 4, 3, game::Color::Black);
 
-    QCOMPARE(checkers.check(), game::GameState::ONGOING);
+    QCOMPARE(checkers.state(), game::GameState::Ongoing);
 }
 
 void GameState::ongoingWhenOnlyOpponentIsStuck() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 7, 0, game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 7, 0, game::Color::Black);
 
-    QVERIFY(!checkers.hasLegalMoves(game::Color::BLACK));
-    QCOMPARE(checkers.check(), game::GameState::ONGOING);
+    QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
+    QCOMPARE(checkers.state(), game::GameState::Ongoing);
 }
 
 void GameState::ongoingMidChain() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 4, 1, game::Color::BLACK);
-    place(checkers, 2, 1, game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 4, 1, game::Color::Black);
+    place(checkers, 2, 1, game::Color::Black);
 
-    checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
+    const auto state = checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
 
     QVERIFY(checkers.activePiece().has_value());
-    QCOMPARE(checkers.check(), game::GameState::ONGOING);
+    QCOMPARE(state, game::GameState::Ongoing);
 }
 
 void GameState::blackWinsWhenWhiteStuck() {
     auto checkers = cleanBoard();
-    place(checkers, 3, 2, game::Color::BLACK);
+    place(checkers, 3, 2, game::Color::Black);
 
-    QCOMPARE(checkers.check(), game::GameState::BLACK_WINS);
+    QCOMPARE(checkers.state(), game::GameState::BlackWins);
 }
 
 void GameState::whiteWinsWhenBlackStuck() {
     auto checkers = cleanBoard();
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 7, 0, game::Color::BLACK);
-    
-    checkers.perform({5, 2}, {{4, 1}, std::nullopt});
-    QCOMPARE(checkers.player(), game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 7, 0, game::Color::Black);
 
-    QCOMPARE(checkers.check(), game::GameState::WHITE_WINS);
+    const auto state = checkers.perform({5, 2}, {{4, 1}, std::nullopt});
+    QCOMPARE(checkers.player(), game::Color::Black);
+    QCOMPARE(state, game::GameState::WhiteWins);
 }
 
 void GameState::drawWhenQuietMovesReachPatience() {
     game::Checkers checkers(8, 0, 3);
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 4, 5, game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 4, 5, game::Color::Black);
 
     checkers.perform({5, 2}, {{4, 1}, std::nullopt});
     checkers.perform({4, 5}, {{5, 4}, std::nullopt});
-    checkers.perform({4, 1}, {{3, 0}, std::nullopt});
+    const auto state = checkers.perform({4, 1}, {{3, 0}, std::nullopt});
 
-    QVERIFY(checkers.hasLegalMoves(game::Color::WHITE));
-    QVERIFY(checkers.hasLegalMoves(game::Color::BLACK));
-
-    QCOMPARE(checkers.check(), game::GameState::DRAW);
+    QVERIFY(checkers.hasLegalMoves(game::Color::White));
+    QVERIFY(checkers.hasLegalMoves(game::Color::Black));
+    QCOMPARE(state, game::GameState::Draw);
 }
 
 void GameState::captureResetsQuietMoves() {
     game::Checkers checkers(8, 0, 1);
-    place(checkers, 5, 2, game::Color::WHITE);
-    place(checkers, 4, 1, game::Color::BLACK);
-    place(checkers, 3, 6, game::Color::BLACK);
+    place(checkers, 5, 2, game::Color::White);
+    place(checkers, 4, 1, game::Color::Black);
+    place(checkers, 3, 6, game::Color::Black);
 
-    checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
+    const auto state = checkers.perform({5, 2}, {{3, 0}, game::Position{4, 1}});
 
-    QCOMPARE(checkers.check(), game::GameState::ONGOING);
+    QCOMPARE(state, game::GameState::Ongoing);
 }
 
 void GameState::promotionResetsQuietMoves() {
     game::Checkers checkers(8, 0, 1);
-    place(checkers, 1, 0, game::Color::WHITE);
-    place(checkers, 5, 4, game::Color::BLACK);
+    place(checkers, 1, 0, game::Color::White);
+    place(checkers, 5, 4, game::Color::Black);
 
-    checkers.perform({1, 0}, {{0, 1}, std::nullopt});
+    const auto state = checkers.perform({1, 0}, {{0, 1}, std::nullopt});
 
-    QCOMPARE(checkers.check(), game::GameState::ONGOING);
+    QCOMPARE(state, game::GameState::Ongoing);
 }
 
 void GameState::drawTakesPriorityOverWin() {
     game::Checkers checkers(8, 0, 1);
-    place(checkers, 5, 2, game::Color::WHITE);
+    place(checkers, 5, 2, game::Color::White);
 
-    checkers.perform({5, 2}, {{4, 1}, std::nullopt});
+    const auto state = checkers.perform({5, 2}, {{4, 1}, std::nullopt});
 
-    QVERIFY(!checkers.hasLegalMoves(game::Color::BLACK));
-    QCOMPARE(checkers.player(), game::Color::BLACK);
-
-    QCOMPARE(checkers.check(), game::GameState::DRAW);
+    QVERIFY(!checkers.hasLegalMoves(game::Color::Black));
+    QCOMPARE(checkers.player(), game::Color::Black);
+    QCOMPARE(state, game::GameState::Draw);
 }
 
 std::int32_t main(std::int32_t argc, char *argv[]) {

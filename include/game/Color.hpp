@@ -5,7 +5,7 @@
 namespace game {
 
 enum struct Color : quint8 {
-    BLACK, WHITE
+    Black, White
 };
 
 inline QDataStream& operator<<(QDataStream& out, Color color) {

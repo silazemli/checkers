@@ -5,10 +5,10 @@
 namespace game {
 
 enum struct GameState : quint8 {
-    ONGOING,
-    DRAW,
-    WHITE_WINS,
-    BLACK_WINS
+    Ongoing,
+    Draw,
+    WhiteWins,
+    BlackWins
 };
 
 inline QDataStream& operator<<(QDataStream& out, GameState state) {

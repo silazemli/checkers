@@ -21,8 +21,8 @@ void Server::handleNewConnection() {
         std::cout << "Black connected" << std::endl;
         // connect(socket, &QTcpSocket::disconnected, this, &Server::onDisconnected);
         
-        sendAssignColor(white, game::Color::WHITE);
-        sendAssignColor(black, game::Color::BLACK);
+        sendAssignColor(white, game::Color::White);
+        sendAssignColor(black, game::Color::Black);
 
         game = std::make_unique<game::Checkers>();
     } else
@@ -87,5 +87,33 @@ void Server::handleRequestHighlighting(Player& player, QDataStream& in) {
 }
 
 void Server::handleSubmitMove(Player& player, QDataStream& in) {
+    game::Position from;
+    game::Position to;
+
+    in >> from >> to;
+
+    std::vector<game::Move> moves = game->validMoves(from);
+    auto iterator = std::find_if(
+        moves.begin(),
+        moves.end(),
+        [&to](game::Move move) {
+            return move.to == to;
+        });
     
+    if (iterator == moves.end()) {
+        qWarning() << "Illegal SubmitMove";
+        return;
+    }
+    game::Move move = *iterator;
+
+    game->perform(from, move);
+
+    game::GameState gameState = game->check();
+    if (gameState == game::GameState::Ongoing) {
+        sendMessage(*white.socket, NetworkAction::UpdateBoardState, game->board);
+        sendMessage(*black.socket, NetworkAction::UpdateBoardState, game->board);
+    } else {
+        sendMessage(*white.socket, NetworkAction::EndGame, gameState);
+        sendMessage(*black.socket, NetworkAction::EndGame, gameState);
+    }
 }

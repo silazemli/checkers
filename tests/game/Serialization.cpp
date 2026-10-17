@@ -70,15 +70,15 @@ private slots:
 };
 
 void Enum::colors() {
-    QCOMPARE(roundTrip(game::Color::BLACK), game::Color::BLACK);
-    QCOMPARE(roundTrip(game::Color::WHITE), game::Color::WHITE);
+    QCOMPARE(roundTrip(game::Color::Black), game::Color::Black);
+    QCOMPARE(roundTrip(game::Color::White), game::Color::White);
 }
 
 void Enum::gameStates() {
-    QCOMPARE(roundTrip(game::GameState::ONGOING), game::GameState::ONGOING);
-    QCOMPARE(roundTrip(game::GameState::DRAW), game::GameState::DRAW);
-    QCOMPARE(roundTrip(game::GameState::WHITE_WINS), game::GameState::WHITE_WINS);
-    QCOMPARE(roundTrip(game::GameState::BLACK_WINS), game::GameState::BLACK_WINS);
+    QCOMPARE(roundTrip(game::GameState::Ongoing), game::GameState::Ongoing);
+    QCOMPARE(roundTrip(game::GameState::Draw), game::GameState::Draw);
+    QCOMPARE(roundTrip(game::GameState::WhiteWins), game::GameState::WhiteWins);
+    QCOMPARE(roundTrip(game::GameState::BlackWins), game::GameState::BlackWins);
 }
 
 class Piece : public QObject {
@@ -92,22 +92,22 @@ private slots:
 };
 
 void Piece::blackMan() {
-    const game::Piece value{game::Color::BLACK, false};
+    const game::Piece value{game::Color::Black, false};
     QCOMPARE(roundTrip(value), value);
 }
 
 void Piece::blackKing() {
-    const game::Piece value{game::Color::BLACK, true};
+    const game::Piece value{game::Color::Black, true};
     QCOMPARE(roundTrip(value), value);
 }
 
 void Piece::whiteMan() {
-    const game::Piece value{game::Color::WHITE, false};
+    const game::Piece value{game::Color::White, false};
     QCOMPARE(roundTrip(value), value);
 }
 
 void Piece::whiteKing() {
-    const game::Piece value{game::Color::WHITE, true};
+    const game::Piece value{game::Color::White, true};
     QCOMPARE(roundTrip(value), value);
 }
 
@@ -199,13 +199,13 @@ void Board::empty() {
 void Board::populated() {
     const game::Board value = {
         { std::nullopt,
-          game::Piece{game::Color::BLACK, false},
+          game::Piece{game::Color::Black, false},
           std::nullopt,
-          game::Piece{game::Color::BLACK, true} },
-        { game::Piece{game::Color::WHITE, true},
+          game::Piece{game::Color::Black, true} },
+        { game::Piece{game::Color::White, true},
           std::nullopt,
           std::nullopt,
-          game::Piece{game::Color::WHITE, false} },
+          game::Piece{game::Color::White, false} },
     };
 
     QCOMPARE(roundTrip(value), value);
@@ -214,7 +214,7 @@ void Board::populated() {
 void Board::ragged() {
     const game::Board value = {
         { std::nullopt },
-        { game::Piece{game::Color::WHITE, false}, std::nullopt, std::nullopt },
+        { game::Piece{game::Color::White, false}, std::nullopt, std::nullopt },
         {},
     };
 

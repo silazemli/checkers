@@ -34,8 +34,8 @@ void Handshake::assignsWhiteAndBlack() {
     QTRY_VERIFY(whiteColor.has_value());
     QTRY_VERIFY(blackColor.has_value());
 
-    QCOMPARE(*whiteColor, game::Color::WHITE);
-    QCOMPARE(*blackColor, game::Color::BLACK);
+    QCOMPARE(*whiteColor, game::Color::White);
+    QCOMPARE(*blackColor, game::Color::Black);
 }
 
 class Highlighting : public QObject {

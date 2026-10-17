@@ -28,6 +28,9 @@ void Client::dispatch(const Message& message) {
         } case NetworkAction::HighlightingResponse : {
             handleHighlightingResponse(in);
             break;
+        } case NetworkAction::EndGame : {
+            handleGameOver(in);
+            break;
         } default :
             qWarning() << "Unknown action:" << static_cast<int>(message.action);
             break;
@@ -57,9 +60,27 @@ void Client::requestHighlighting(const game::Position& position) {
     sendMessage(socket, NetworkAction::RequestHighlighting, position);
 }
 
+void Client::submitMove(const game::Position& from, const game::Position& to) {
+    sendMessage(socket, NetworkAction::SubmitMove, from, to);
+}
+
 void Client::handleHighlightingResponse(QDataStream& in) {
     std::vector<game::Position> cells;
     in >> cells;
     
     emit highlightingReceived(cells);
+}
+
+void Client::handleUpdateBoardState(QDataStream& in) {
+    game::Board board;
+    in >> board;
+
+    emit updateBoardState(board);
+}
+
+void Client::handleGameOver(QDataStream& in) {
+    game::GameState gameState;
+    in >> gameState;
+
+    emit gameOver(gameState);
 }

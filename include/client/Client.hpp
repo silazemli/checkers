@@ -14,6 +14,7 @@
 #include "game/Move.hpp"
 #include "game/Color.hpp"
 #include "game/Position.hpp"
+#include "game/GameState.hpp"
 #include "game/Board.hpp"
 
 class Client : public QObject {
@@ -28,6 +29,7 @@ public:
     );
 
     void requestHighlighting(const game::Position& position);
+    void submitMove(const game::Position& from, const game::Position& to);
   
 private slots:
     void handleDataReady();
@@ -35,6 +37,8 @@ private slots:
 signals:
     void colorAssigned(game::Color color);
     void highlightingReceived(std::vector<game::Position> cells);
+    void updateBoardState(game::Board board);
+    void gameOver(game::GameState gameState);
 
 private:
     QTcpSocket socket;
@@ -46,4 +50,6 @@ private:
 
     void handleAssignColor(QDataStream& in);
     void handleHighlightingResponse(QDataStream& in);
+    void handleUpdateBoardState(QDataStream& in);
+    void handleGameOver(QDataStream& in);
 };

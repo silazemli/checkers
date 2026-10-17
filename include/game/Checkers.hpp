@@ -18,7 +18,7 @@ private:
     std::int32_t boardSize;
     std::int32_t numRows;
 
-    Board board;
+    Board boardState;
     
     Color currentPlayer;
     std::optional<Position> capturing;
@@ -36,12 +36,17 @@ private:
 public:
     Checkers(std::int32_t boardSize = 8, std::int32_t numRows = 2, std::int32_t patience = 40);
 
-    bool inBounds(std::int32_t row, std::int32_t column) const;
+    inline bool inBounds(std::int32_t row, std::int32_t column) const {
+        return row >= 0 && row < boardSize &&
+               column >= 0 && column < boardSize;
+    }
 
     std::optional<Piece> at(std::int32_t row, std::int32_t column) const;
     std::optional<Piece> at(Position position) const;
 
     void place(Piece, Position);
+
+    inline const Board& board() const { return boardState };
 
     std::vector<Move> validMoves(Position position) const;
     std::vector<Move> captureMoves(Position position) const;
@@ -49,12 +54,12 @@ public:
 
     void perform(Position from, const Move& move);
 
-    Color player() const;
-    std::optional<Position> activePiece() const;
+    inline const Color player() const { return currentPlayer; }
+    inline std::optional<Position> activePiece() const { return capturing; }
 
     bool hasLegalMoves(Color player) const;
+    void updateGameState();
 
-    GameState check() const;
 };
 
 } // namespace

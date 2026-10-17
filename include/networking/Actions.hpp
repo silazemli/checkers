@@ -7,7 +7,8 @@ enum class NetworkAction : quint8 {
     HighlightingResponse,
     SubmitMove,
     UpdateBoardState,
-    AssignColor
+    AssignColor,
+    EndGame
 };
 
 inline QDataStream& operator<<(QDataStream& outputStream, NetworkAction action) {
